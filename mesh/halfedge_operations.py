@@ -1,9 +1,7 @@
 # coding: utf-8
 
-from CGAL.CGAL_Polyhedron_3 import Polyhedron_3, Polyhedron_3_Halfedge_iterator, Polyhedron_3_Vertex_handle, \
-    Polyhedron_3_Halfedge_handle, Polyhedron_3_Halfedge_around_vertex_circulator, Polyhedron_3_Facet_handle
-
 from abstract_operations import AbstractMeshOperations
+from mesh_loader import ObjLoader, OffLoader
 
 __author__ = "Michał Ciołczyk, Michał Janczykowski"
 
@@ -11,8 +9,12 @@ __author__ = "Michał Ciołczyk, Michał Janczykowski"
 class HalfedgeMeshOperations(AbstractMeshOperations):
     def __init__(self, filename):
         super(HalfedgeMeshOperations, self).__init__(filename)
-        # TODO: Handle obj files
-        self.polyhedron = Polyhedron_3(self.filename)
+        if self.filename.endswith('.obj'):
+            self.polyhedron = ObjLoader(self.filename).to_polyhedron()
+        elif self.filename.endswith('.off'):
+            self.polyhedron = OffLoader(self.filename).to_polyhedron()
+        else:
+            raise AttributeError("Unknown file format")
         self.vertices = self._create_vertices_map()
         self.facets = self._create_facets_map()
 
@@ -104,7 +106,30 @@ if __name__ == "__main__":
     print('\nmesh has border:')
     print operations.has_border()
 
-    print('\nface neighbours:')  # FIXME segfault?
-    for f in operations.find_face_neighbors(3):
-        print_triangle_vertices(f)
+    # print('\nface neighbours:')  # FIXME segfault?
+    # for f in operations.find_face_neighbors(3):
+    #     print_triangle_vertices(f)
+
+    print
+    print '-------------------------'
+    print
+
+    operations = HalfedgeMeshOperations('in/test1.obj')
+    vertex = operations.get_vertex(3)
+    print('chosen vertex:')
+    print(vertex.point())
+    print('\nneighbours:')
+    for v in operations.find_vertex_neighbors(3):
+        print v.point()
+
+    print('\nfacets:')
+    for f in operations.find_vertex_faces(3):
+        print_triangle_vertices(f)  # TODO do sth to be able to set IDs!
+
+    print('\nmesh has border:')
+    print operations.has_border()
+
+    # print('\nface neighbours:')  # FIXME segfault?
+    # for f in operations.find_face_neighbors(3):
+    #     print_triangle_vertices(f)
 

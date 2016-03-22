@@ -11,9 +11,19 @@ class AbstractMeshLoader(object):
         self.filename = filename
 
     def to_polyhedron(self):
+        """
+        Returns CGAL polyhedron representation of the object
+        :return CGAL polyhedron
+        :rtype Polyhedron_3
+        """
         raise NotImplementedError()
 
     def to_vertices_and_faces(self):
+        """
+        Returns vertices list and faces list.
+        :return vertices list, faces list
+        :rtype list, list
+        """
         raise NotImplementedError()
 
 

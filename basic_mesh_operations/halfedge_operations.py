@@ -74,12 +74,24 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
 
     def find_face_neighbors(self, face_id):
         facet = self.facets[face_id]
-        circulator = facet.facet_begin()  # type: Halfedge_around_facet_circulator
-        for i in xrange(facet.facet_degree()):
-            he = circulator.next()
-            he_opp = he.opposite()
-            if not he_opp.is_border():
-                yield he.opposite().facet()
+        both_levels_neighbours = set()  # actually this set will contain the analysed facet as well
+
+        def find_single_face_neighbors(facet):
+            circulator = facet.facet_begin()  # type: Halfedge_around_facet_circulator
+            for i in xrange(facet.facet_degree()):
+                he = circulator.next()
+                he_opp = he.opposite()
+                if not he_opp.is_border():
+                    yield he.opposite().facet()
+
+        first_level_neighbours = set(find_single_face_neighbors(facet))
+        both_levels_neighbours.update(first_level_neighbours)
+
+        for facet_nbr in first_level_neighbours:
+            both_levels_neighbours.update(find_single_face_neighbors(facet_nbr))
+
+        both_levels_neighbours.remove(facet)
+        return both_levels_neighbours
 
     def flip_faces(self, face1_id, face2_id):
         pass

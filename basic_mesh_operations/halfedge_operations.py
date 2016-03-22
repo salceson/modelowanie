@@ -73,7 +73,9 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
         circulator = facet.facet_begin()  # type: Halfedge_around_facet_circulator
         for i in xrange(facet.facet_degree()):
             he = circulator.next()
-            yield he.opposite().facet()
+            he_opp = he.opposite()
+            if not he_opp.is_border():
+                yield he.opposite().facet()
 
     def flip_faces(self, face1_id, face2_id):
         pass

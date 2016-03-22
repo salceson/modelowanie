@@ -108,9 +108,9 @@ if __name__ == "__main__":
     print('\nmesh has border:')
     print operations.has_border()
 
-    # print('\nface neighbours:')  # FIXME segfault?
-    # for f in operations.find_face_neighbors(3):
-    #     print_triangle_vertices(f)
+    print('\nface neighbours:')
+    for f in operations.find_face_neighbors(3):
+        print_triangle_vertices(f)
 
     print
     print '-------------------------'
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     print('\nmesh has border:')
     print operations.has_border()
 
-    # print('\nface neighbours:')  # FIXME segfault?
-    # for f in operations.find_face_neighbors(3):
-    #     print_triangle_vertices(f)
+    print('\nface neighbours:')  # FIXME segfault?
+    for f in operations.find_face_neighbors(3):
+        print_triangle_vertices(f)
 

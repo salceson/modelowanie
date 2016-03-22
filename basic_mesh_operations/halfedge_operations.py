@@ -91,7 +91,7 @@ def print_triangle_vertices(facet):
 
 
 if __name__ == "__main__":
-    operations = HalfedgeMeshOperations('in/test1.off')
+    operations = HalfedgeMeshOperations('data/test1.off')
     vertex = operations.get_vertex(3)
     print('chosen vertex:')
     print(vertex.point())
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     print '-------------------------'
     print
 
-    operations = HalfedgeMeshOperations('in/test1.obj')
+    operations = HalfedgeMeshOperations('data/test1.obj')
     vertex = operations.get_vertex(3)
     print('chosen vertex:')
     print(vertex.point())

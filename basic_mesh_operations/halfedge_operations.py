@@ -2,6 +2,8 @@
 
 from abstract_operations import AbstractMeshOperations
 from mesh_loader import ObjLoader, OffLoader
+from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Halfedge_around_vertex_circulator, \
+    Polyhedron_3_Halfedge_around_facet_circulator
 
 __author__ = "Michał Ciołczyk, Michał Janczykowski"
 
@@ -53,7 +55,7 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
 
     # noinspection PyMethodMayBeStatic
     def _list_vertex_direct_neighbours(self, vertex):
-        circulator = vertex.vertex_begin()  # type: Halfedge_around_vertex_circulator
+        circulator = vertex.vertex_begin()  # type: Polyhedron_3_Halfedge_around_vertex_circulator
         for i in xrange(vertex.vertex_degree()):
             he = circulator.next()
             yield he.opposite().vertex()
@@ -77,7 +79,7 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
         both_levels_neighbours = set()  # actually this set will contain the analysed facet as well
 
         def find_single_face_neighbors(facet):
-            circulator = facet.facet_begin()  # type: Halfedge_around_facet_circulator
+            circulator = facet.facet_begin()  # type: Polyhedron_3_Halfedge_around_facet_circulator
             for i in xrange(facet.facet_degree()):
                 he = circulator.next()
                 he_opp = he.opposite()
@@ -101,7 +103,7 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
 
 
 def print_triangle_vertices(facet):
-    circulator = facet.facet_begin()  # type: Halfedge_around_facet_circulator
+    circulator = facet.facet_begin()  # type: Polyhedron_3_Halfedge_around_facet_circulator
     for i in xrange(3):
         he = circulator.next()
         print he.vertex().point(), '  \t',

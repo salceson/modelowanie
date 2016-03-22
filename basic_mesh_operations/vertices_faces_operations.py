@@ -5,6 +5,10 @@ from mesh_loader import OffLoader, ObjLoader
 
 
 class VerticesFacesOperations(AbstractMeshOperations):
+    """
+    Provides basic operations using vertices list and faces list as underlying data structure.
+    """
+
     def __init__(self, filename):
         super(VerticesFacesOperations, self).__init__(filename)
         if self.filename.endswith('.obj'):
@@ -18,9 +22,9 @@ class VerticesFacesOperations(AbstractMeshOperations):
         return self.vertices[vertex_id]
 
     def find_vertex_faces(self, vertex_id):
-        i = 0
+        i = 1
         found_faces = []
-        for face in self.faces:
+        for face in self.faces[1:]:
             if vertex_id in face:
                 found_faces.append(i)
             i += 1
@@ -40,12 +44,37 @@ class VerticesFacesOperations(AbstractMeshOperations):
         pass
 
     def find_vertex_neighbors(self, vertex_id):
-        pass
+        first_level_neighbours = self._find_vertex_direct_neighbors(vertex_id)
+        first_level_neighbours.remove(vertex_id)
+        both_levels_neighbours = set()  # actually this set will contain the analysed vertex as well
+        both_levels_neighbours.update(first_level_neighbours)
+
+        for vn in first_level_neighbours:
+            both_levels_neighbours.update(self._find_vertex_direct_neighbors(vn))
+
+        both_levels_neighbours.remove(vertex_id)
+        return list(map(lambda v_id: self.vertices[v_id], both_levels_neighbours))
+
+    def _find_vertex_direct_neighbors(self, vertex_id):
+        faces = self.find_vertex_faces(vertex_id)
+        neighbors = set()
+        for face in faces[1:]:
+            for vertex in self.faces[face]:
+                neighbors.add(vertex)
+        return neighbors
 
     def has_border(self):
         pass
 
+
 if __name__ == '__main__':
-    operations = VerticesFacesOperations('data/test1.obj')
-    print operations.find_vertex_faces(0)
-    operations.flip_faces(0, 1)
+    operations = VerticesFacesOperations('data/test1.off')
+    vertex = operations.get_vertex(3)
+    print('chosen vertex:')
+    print(vertex)
+    # operations.flip_faces(2, 3)
+    print('\nneighbours:')
+    for neighbor in operations.find_vertex_neighbors(3):
+        print neighbor
+    print('\nfaces:')
+    print operations.find_vertex_faces(3)

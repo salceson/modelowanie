@@ -28,10 +28,11 @@ class AbstractMeshLoader(object):
 
 
 class ObjLoader(AbstractMeshLoader):
+    # noinspection PyTypeChecker
     def __init__(self, filename):
         super(ObjLoader, self).__init__(filename)
-        self.vertices = []
-        self.faces = []
+        self.vertices = [None]
+        self.faces = [None]
         with open(self.filename) as f:
             for line in f:
                 line_contents = line.strip()
@@ -43,7 +44,7 @@ class ObjLoader(AbstractMeshLoader):
                 if line_contents[0] == "v":
                     self.vertices.append([float(x) for x in line_contents[1:]])
                 if line_contents[0] == "f":
-                    self.faces.append([int(x) - 1 for x in line_contents[1:]])
+                    self.faces.append([int(x) for x in line_contents[1:]])
 
     def to_vertices_and_faces(self):
         return self.vertices, self.faces
@@ -51,17 +52,15 @@ class ObjLoader(AbstractMeshLoader):
     def to_polyhedron(self):
         polyhedron_modifier = Polyhedron_modifier()
         polyhedron_modifier.begin_surface(len(self.vertices), len(self.faces))
-        for vertex in self.vertices:
+        for vertex in self.vertices[1:]:
             polyhedron_modifier.add_vertex(Point_3(vertex[0], vertex[1], vertex[2]))
-        for face in self.faces:
+        for face in self.faces[1:]:
             polyhedron_modifier.begin_facet()
             for vertex in face:
-                polyhedron_modifier.add_vertex_to_facet(vertex)
+                polyhedron_modifier.add_vertex_to_facet(vertex - 1)
             polyhedron_modifier.end_facet()
         polyhedron = Polyhedron_3()
         polyhedron.delegate(polyhedron_modifier)
-        if not polyhedron.is_valid():
-            raise RuntimeError("Cannot load mesh: %s. Mesh is not manifold!" % self.filename)
         return polyhedron
 
 
@@ -72,9 +71,10 @@ class OffLoader(AbstractMeshLoader):
     def to_polyhedron(self):
         return Polyhedron_3(self.filename)
 
+    # noinspection PyTypeChecker
     def to_vertices_and_faces(self):
-        vertices = []
-        faces = []
+        vertices = [None]
+        faces = [None]
         with open(self.filename) as f:
             read_amounts = False
             vertices_amount = 0
@@ -94,7 +94,7 @@ class OffLoader(AbstractMeshLoader):
                     vertices.append([float(x) for x in line_contents])
                     vertices_read += 1
                 else:
-                    faces.append([int(x) for x in line_contents[1:]])
+                    faces.append([int(x) + 1 for x in line_contents[1:]])
         return vertices, faces
 
 

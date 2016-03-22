@@ -28,6 +28,9 @@ class VerticesFacesOperations(AbstractMeshOperations):
         return self.faces[face_id]
 
     def find_vertex_faces(self, vertex_id):
+        return list(map(lambda x: self.get_face(x), self._find_vertex_faces(vertex_id)))
+
+    def _find_vertex_faces(self, vertex_id):
         i = 1
         found_faces = []
         for face in self.faces[1:]:
@@ -76,7 +79,7 @@ class VerticesFacesOperations(AbstractMeshOperations):
 
     def find_vertex_neighbors(self, vertex_id):
         def find_vertex_direct_neighbors(v_id):
-            faces = self.find_vertex_faces(v_id)
+            faces = self._find_vertex_faces(v_id)
             neighbors = set()
             for face in faces[1:]:
                 for v in self.faces[face]:
@@ -106,22 +109,27 @@ class VerticesFacesOperations(AbstractMeshOperations):
 
 
 if __name__ == '__main__':
-    operations = VerticesFacesOperations('data/test1.off')
+    operations = VerticesFacesOperations('data/test1.obj')
     vertex = operations.get_vertex(3)
     print('chosen vertex:')
     print(vertex)
     print('\nneighbours:')
-    for neighbor in operations.find_vertex_neighbors(3):
-        print neighbor
-    print('\nfaces:')
+    for v in operations.find_vertex_neighbors(3):
+        print(v)
+
+    print('\nfacets:')
     print(operations.find_vertex_faces(3))
-    print('\nhas border:')
-    print(operations.has_border())
-    print('\n\nchosen face:')
-    face = operations.get_face(3)
-    print(face)
-    print('\nneighbours:')
+
+    print('\nmesh has border:')
+    print operations.has_border()
+
+    print('\nface neighbours:')
     print(operations.find_face_neighbors(3))
+
     print('\n\nFlipping faces 2 and 3:')
-    print([operations.get_face(2), operations.get_face(3)])
-    print(operations.flip_faces(2, 3))
+    print(operations.get_face(2))
+    print(operations.get_face(3))
+    new_f1, new_f2 = operations.flip_faces(2, 3)
+    print('\n---\n')
+    print(new_f1)
+    print(new_f2)

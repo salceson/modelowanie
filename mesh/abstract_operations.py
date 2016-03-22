@@ -13,7 +13,7 @@ class AbstractMeshOperations(object):
     def find_vertex_faces(self, vertex_id):
         raise NotImplementedError()
 
-    def find_face_neighbors(self, vertex_id):
+    def find_face_neighbors(self, face_id):
         raise NotImplementedError()
 
     def flip_faces(self, face1_id, face2_id):

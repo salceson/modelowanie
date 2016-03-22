@@ -14,6 +14,7 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
         # TODO: Handle obj files
         self.polyhedron = Polyhedron_3(self.filename)
         self.vertices = self._create_vertices_map()
+        self.facets = self._create_facets_map()
 
     def _create_vertices_map(self):
         vertices = dict()
@@ -22,6 +23,14 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
             vertices[i] = v
             i += 1
         return vertices
+
+    def _create_facets_map(self):
+        facets = dict()
+        i = 1
+        for f in self.polyhedron.facets():
+            facets[i] = f
+            i += 1
+        return facets
 
     def find_vertex_neighbors(self, vertex_id):
         vertex = self.vertices[vertex_id]
@@ -57,14 +66,26 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
                 return True
         return False
 
-    def find_face_neighbors(self, vertex_id):
-        pass
+    def find_face_neighbors(self, face_id):
+        facet = self.facets[face_id]
+        circulator = facet.facet_begin()  # type: Halfedge_around_facet_circulator
+        for i in xrange(facet.facet_degree()):
+            he = circulator.next()
+            yield he.opposite().facet()
 
     def flip_faces(self, face1_id, face2_id):
         pass
 
     def get_vertex(self, vertex_id):
         return self.vertices[vertex_id]
+
+
+def print_triangle_vertices(facet):
+    circulator = facet.facet_begin()  # type: Halfedge_around_facet_circulator
+    for i in xrange(3):
+        he = circulator.next()
+        print he.vertex().point(), '  \t',
+    print
 
 
 if __name__ == "__main__":
@@ -78,7 +99,12 @@ if __name__ == "__main__":
 
     print('\nfacets:')
     for f in operations.find_vertex_faces(3):
-        print f.id()  # TODO do sth to be able to set IDs!
+        print_triangle_vertices(f)  # TODO do sth to be able to set IDs!
 
     print('\nmesh has border:')
     print operations.has_border()
+
+    print('\nface neighbours:')  # FIXME segfault?
+    for f in operations.find_face_neighbors(3):
+        print_triangle_vertices(f)
+

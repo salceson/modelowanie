@@ -42,3 +42,6 @@ class AbstractMeshOperations(object):
 
     def get_vertex(self, vertex_id):
         raise NotImplementedError()
+
+    def get_face(self, face_id):
+        raise NotImplementedError()

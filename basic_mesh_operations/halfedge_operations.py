@@ -2,8 +2,8 @@
 
 from abstract_operations import AbstractMeshOperations
 from mesh_loader import ObjLoader, OffLoader
-from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Halfedge_around_vertex_circulator, \
-    Polyhedron_3_Halfedge_around_facet_circulator
+from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Halfedge_around_vertex_circulator, Polyhedron_3_Facet_handle, \
+    Polyhedron_3_Halfedge_around_facet_circulator, Polyhedron_3_Halfedge_handle
 
 __author__ = "Michał Ciołczyk, Michał Janczykowski"
 
@@ -96,10 +96,30 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
         return both_levels_neighbours
 
     def flip_faces(self, face1_id, face2_id):
-        pass
+        face1 = self.facets[face1_id]  # type: Polyhedron_3_Facet_handle
+        face2 = self.facets[face2_id]  # type: Polyhedron_3_Facet_handle
+        diagonal = face1.halfedge()  # type: Polyhedron_3_Halfedge_handle
+        for i in xrange(3):
+            if not diagonal.is_border():
+                opposite = diagonal.opposite()  # type: Polyhedron_3_Halfedge_handle
+                if opposite.facet() == face2:
+                    break
+            diagonal = diagonal.next()
+        joined = self.polyhedron.join_facet(diagonal)
+        he1 = joined  # type: Polyhedron_3_Halfedge_handle
+        he2 = he1.next().next()  # type: Polyhedron_3_Halfedge_handle
+        he2 = self.polyhedron.split_facet(he1, he2).opposite()  # type: Polyhedron_3_Halfedge_handle
+        new_face1 = he1.facet()  # type: Polyhedron_3_Facet_handle
+        new_face2 = he2.facet()  # type: Polyhedron_3_Facet_handle
+        self.facets[face1_id] = new_face1
+        self.facets[face2_id] = new_face2
+        return new_face1, new_face2
 
     def get_vertex(self, vertex_id):
         return self.vertices[vertex_id]
+
+    def get_face(self, face_id):
+        return self.facets[face_id]
 
 
 def print_triangle_vertices(facet):
@@ -126,7 +146,18 @@ if __name__ == "__main__":
     print('\nmesh has border:')
     print operations.has_border()
 
-    print('\nface neighbours:')  # FIXME segfault?
+    print('\nface neighbours:')
     for f in operations.find_face_neighbors(3):
         print_triangle_vertices(f)
 
+    print('\n\nFlipping faces 2 and 3:')
+    print_triangle_vertices(operations.get_face(2))
+    print('')
+    print_triangle_vertices(operations.get_face(3))
+    print('')
+    new_f1, new_f2 = operations.flip_faces(2, 3)
+    print('---')
+    print_triangle_vertices(new_f1)
+    print('')
+    print_triangle_vertices(new_f2)
+    print('')

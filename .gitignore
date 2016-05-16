@@ -108,3 +108,5 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+vertex_clustering/out.off

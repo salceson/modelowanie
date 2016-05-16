@@ -1,9 +1,12 @@
 # coding: utf-8
 
-from abstract_operations import AbstractMeshOperations
-from mesh_loader import ObjLoader, OffLoader
+from __future__ import generators, print_function
+
 from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Halfedge_around_vertex_circulator, Polyhedron_3_Facet_handle, \
     Polyhedron_3_Halfedge_around_facet_circulator, Polyhedron_3_Halfedge_handle
+
+from abstract_operations import AbstractMeshOperations
+from mesh_loader import ObjLoader, OffLoader
 
 __author__ = "Michał Ciołczyk, Michał Janczykowski"
 
@@ -56,7 +59,7 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
     # noinspection PyMethodMayBeStatic
     def _list_vertex_direct_neighbours(self, vertex):
         circulator = vertex.vertex_begin()  # type: Polyhedron_3_Halfedge_around_vertex_circulator
-        for i in xrange(vertex.vertex_degree()):
+        for i in range(vertex.vertex_degree()):
             he = circulator.next()
             yield he.opposite().vertex()
 
@@ -64,7 +67,7 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
         vertex = self.vertices[vertex_id]
         circulator = vertex.vertex_begin()
         facets = []
-        for i in xrange(vertex.vertex_degree()):
+        for i in range(vertex.vertex_degree()):
             he = circulator.next()
             if not he.is_border():
                 facets.append(self._facet(he.facet()))
@@ -82,7 +85,7 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
 
         def find_single_face_neighbors(facet):
             circulator = facet.facet_begin()  # type: Polyhedron_3_Halfedge_around_facet_circulator
-            for i in xrange(facet.facet_degree()):
+            for i in range(facet.facet_degree()):
                 he = circulator.next()
                 he_opp = he.opposite()
                 if not he_opp.is_border():
@@ -101,7 +104,7 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
         face1 = self.facets[face1_id]  # type: Polyhedron_3_Facet_handle
         face2 = self.facets[face2_id]  # type: Polyhedron_3_Facet_handle
         diagonal = face1.halfedge()  # type: Polyhedron_3_Halfedge_handle
-        for i in xrange(3):
+        for i in range(3):
             if not diagonal.is_border():
                 opposite = diagonal.opposite()  # type: Polyhedron_3_Halfedge_handle
                 if opposite.facet() == face2:
@@ -139,10 +142,10 @@ class HalfedgeMeshOperations(AbstractMeshOperations):
 
 def print_triangle_vertices(facet):
     circulator = facet.facet_begin()  # type: Polyhedron_3_Halfedge_around_facet_circulator
-    for i in xrange(3):
+    for i in range(3):
         he = circulator.next()
-        print he.vertex().point(), '  \t',
-    print
+        print(he.vertex().point(), '  \t')
+    print()
 
 
 if __name__ == "__main__":
@@ -158,7 +161,7 @@ if __name__ == "__main__":
     print(operations.find_vertex_faces(3))
 
     print('\nmesh has border:')
-    print operations.has_border()
+    print(operations.has_border())
 
     print('\nface neighbours:')
     print(operations.find_face_neighbors(3))

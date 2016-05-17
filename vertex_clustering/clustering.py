@@ -1,10 +1,9 @@
 # coding: utf-8
 from __future__ import print_function, generators
 
+import sys
 from CGAL.CGAL_Polyhedron_3 import Polyhedron_3
 from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Facet_handle
-from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Halfedge_around_facet_circulator
-from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Halfedge_handle
 
 from bucket import get_bucket_for_vertex
 from mesh_loader import *
@@ -22,7 +21,7 @@ def cluster(mesh, epsilon, representative_method, filename):
     for v in mesh.vertices():
         b = get_bucket_for_vertex(v, epsilon)
         if b not in buckets:
-            bucket = Bucket(b, representative_method)
+            bucket = Bucket(b, representative_method, epsilon)
             buckets[b] = bucket
         buckets[b].append(v)
 
@@ -82,5 +81,5 @@ def cluster(mesh, epsilon, representative_method, filename):
 
 
 if __name__ == "__main__":
-    mesh = OffLoader('data/Bunny.off').to_polyhedron()
-    cluster(mesh, 0.01, median_representative, 'out.off')
+    mesh = OffLoader("data/%s.off" % sys.argv[1]).to_polyhedron()
+    cluster(mesh, 10, quadric_errors_representative, 'out.off')

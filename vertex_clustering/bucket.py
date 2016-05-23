@@ -13,7 +13,13 @@ def _round_point_no_nearest(point, epsilon):
 
 def get_bucket_for_vertex(vertex, epsilon):
     """
-    :type vertex Polyhedron_3_Vertex_handle
+    Returns cluster's center for vertex.
+
+    :param vertex: vertex to calculate cluster for
+    :type vertex: Polyhedron_3_Vertex_handle
+    :param epsilon: epsilon used in algorithm (see docs)
+    :type epsilon: float
+    :return: cluster's center for vertex
     """
     return tuple(_round_point_no_nearest([float(x) for x in str(vertex.point()).split()], epsilon))
 

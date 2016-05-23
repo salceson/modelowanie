@@ -14,13 +14,19 @@ def _round_point_no_nearest(point, epsilon):
 def get_bucket_for_vertex(vertex, epsilon):
     """
     :type vertex Polyhedron_3_Vertex_handle
-    :return:
     """
     return tuple(_round_point_no_nearest([float(x) for x in str(vertex.point()).split()], epsilon))
 
 
 class Bucket(object):
     def __init__(self, coordinates, representative_function, epsilon):
+        """
+        Represents a cluster.
+
+        :param coordinates: cluster's center
+        :param representative_function: representative method
+        :param epsilon: epsilon
+        """
         self.coordinates = coordinates
         self.representative_function = representative_function
         self.original_vertices = []
@@ -28,10 +34,20 @@ class Bucket(object):
         self.epsilon = epsilon
 
     def append(self, vertex):
+        """
+        Adds vertex to cluster
+
+        :param vertex: vertex to add
+        """
         self.original_vertices.append(vertex)
 
     @property
     def representative(self):
+        """
+        Returns representative (if not calculated, calculates it)
+
+        :return: cluster's representative
+        """
         if not self._representative:
             self._representative = self.representative_function(self)
             if tuple(_round_point_no_nearest(self._representative, self.epsilon)) != self.coordinates:

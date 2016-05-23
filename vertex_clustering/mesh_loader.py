@@ -1,9 +1,11 @@
 # coding: utf-8
 
-from CGAL.CGAL_Polyhedron_3 import Polyhedron_3, Polyhedron_modifier
-from CGAL.CGAL_Kernel import Point_3
+from __future__ import print_function
 
-__author__ = "Michał Ciołczyk"
+from CGAL.CGAL_Kernel import Point_3
+from CGAL.CGAL_Polyhedron_3 import Polyhedron_3, Polyhedron_modifier
+
+__author__ = "Michał Ciołczyk, Michał Janczykowski"
 
 
 class AbstractMeshLoader(object):
@@ -102,12 +104,12 @@ if __name__ == "__main__":
     obj = ObjLoader("data/test1.obj")
     obj_vertices, obj_faces = obj.to_vertices_and_faces()
     obj_polyhedron = obj.to_polyhedron()
-    print obj_vertices
-    print obj_faces
-    print obj_polyhedron
+    print(obj_vertices)
+    print(obj_faces)
+    print(obj_polyhedron)
     off = OffLoader("data/test1.off")
     off_vertices, off_faces = off.to_vertices_and_faces()
     off_polyhedron = off.to_polyhedron()
-    print off_vertices
-    print off_faces
-    print off_polyhedron
+    print(off_vertices)
+    print(off_faces)
+    print(off_polyhedron)

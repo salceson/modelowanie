@@ -14,7 +14,19 @@ __author__ = "Michał Ciołczyk, Michał Janczykowski"
 
 def cluster(mesh, epsilon, representative_method, filename):
     """
-    :type mesh Polyhedron_3
+    Performs vertex clustering on mesh using parameters epsilon and representative_method.
+
+    Saves output mesh to file: filename.
+
+    :param mesh: input mesh
+    :param epsilon: epsilon used in algorithm (see docs)
+    :param representative_method: representative method used in algorithm (see docs)
+    :param filename: filename of the ouput mesh
+
+    :type mesh: Polyhedron_3
+    :type epsilon: float
+    :type filename: string
+    :type representative_method: (Bucket) -> tuple(float, float, float)
     """
     buckets = {}
 
@@ -82,4 +94,4 @@ def cluster(mesh, epsilon, representative_method, filename):
 
 if __name__ == "__main__":
     mesh = OffLoader("data/%s.off" % sys.argv[1]).to_polyhedron()
-    cluster(mesh, 10, quadric_errors_representative, 'out.off')
+    cluster(mesh, 2.0, mean_representative, 'out.off')

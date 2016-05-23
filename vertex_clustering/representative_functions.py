@@ -1,6 +1,9 @@
 # coding: utf-8
 from __future__ import print_function, generators
 
+from functools import reduce
+from math import fsum
+
 import numpy as np
 from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Halfedge_around_facet_circulator
 from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Halfedge_around_vertex_circulator
@@ -16,10 +19,11 @@ __author__ = "Michał Ciołczyk, Michał Janczykowski"
 def dummy_representative(bucket):
     """
     Dummy representative function.
+
     :param bucket: bucket to calculate representative from.
-    :type bucket Bucket
+    :type bucket: Bucket
     :return: bucket's representative vertex coordinates
-    :rtype tuple(float, float, float)
+    :rtype: tuple(float, float, float)
     """
     return bucket.coordinates
 
@@ -27,10 +31,11 @@ def dummy_representative(bucket):
 def mean_representative(bucket):
     """
     Mean representative function.
+
     :param bucket: bucket to calculate representative from.
-    :type bucket Bucket
+    :type bucket: Bucket
     :return: bucket's representative vertex coordinates
-    :rtype tuple(float, float, float)
+    :rtype: tuple(float, float, float)
     """
     n = len(bucket.original_vertices)
     if 0 == n:
@@ -49,10 +54,11 @@ def mean_representative(bucket):
 def median_representative(bucket):
     """
     Mean representative function.
+
     :param bucket: bucket to calculate representative from.
-    :type bucket Bucket
+    :type bucket: Bucket
     :return: bucket's representative vertex coordinates
-    :rtype tuple(float, float, float)
+    :rtype: tuple(float, float, float)
     """
     n = len(bucket.original_vertices)
     if 0 == n:
@@ -60,21 +66,26 @@ def median_representative(bucket):
     xs = []
     ys = []
     zs = []
+    points = []
     for vertex in bucket.original_vertices:  # type: Polyhedron_3_Vertex_handle
         vertex = [float(x) for x in str(vertex.point()).split()]
+        points.append(tuple([vertex[0], vertex[1], vertex[2]]))
         xs.append(vertex[0])
         ys.append(vertex[1])
         zs.append(vertex[2])
-    return tuple([np.median(xs), np.median(ys), np.median(zs)])
+    mean = tuple([np.average(xs), np.average(ys), np.average(zs)])
+    dist_sqr = lambda v1, v2: fsum([(v1[0] - v2[0]) ** 2, (v1[1] - v2[1]) ** 2, (v1[2] - v2[2]) ** 2])
+    return reduce(lambda acc, v: acc if dist_sqr(acc, mean) < dist_sqr(v, mean) else v, points)
 
 
 def quadric_errors_representative(bucket):
     """
     Quadric errors representative function.
+
     :param bucket: bucket to calculate representative from.
-    :type bucket Bucket
+    :type bucket: Bucket
     :return: bucket's representative vertex coordinates
-    :rtype tuple(float, float, float)
+    :rtype: tuple(float, float, float)
     """
     A = np.zeros((3, 3))
     b = np.zeros((3, 1))

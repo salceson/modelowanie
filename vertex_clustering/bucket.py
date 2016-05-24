@@ -60,6 +60,6 @@ class Bucket(object):
                 representative_np = np.array(list(self._representative))
                 coordinates_np = np.array(list(self.coordinates))
                 norm = np.linalg.norm(representative_np - coordinates_np)
-                if norm > 10 * self.epsilon:
+                if norm > 5 * self.epsilon:
                     self._representative = self.coordinates
         return self._representative

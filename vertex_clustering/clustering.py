@@ -5,6 +5,8 @@ import sys
 from CGAL.CGAL_Polyhedron_3 import Polyhedron_3
 from CGAL.CGAL_Polyhedron_3 import Polyhedron_3_Facet_handle
 
+import time
+
 from bucket import get_bucket_for_vertex
 from mesh_loader import *
 from representative_functions import *
@@ -94,4 +96,15 @@ def cluster(mesh, epsilon, representative_method, filename):
 
 if __name__ == "__main__":
     mesh = OffLoader("data/%s.off" % sys.argv[1]).to_polyhedron()
-    cluster(mesh, 2.0, mean_representative, 'out.off')
+    start_time = time.time()
+    cluster(mesh, 0.01, quadric_errors_representative, "out/%s_quad.off" % sys.argv[1])
+    print(time.time() - start_time)
+    start_time = time.time()
+    cluster(mesh, 0.01, mean_representative, "out/%s_mean.off" % sys.argv[1])
+    print(time.time() - start_time)
+    start_time = time.time()
+    cluster(mesh, 0.01, median_representative, "out/%s_median.off" % sys.argv[1])
+    print(time.time() - start_time)
+    start_time = time.time()
+    cluster(mesh, 0.01, dummy_representative, "out/%s_dummy.off" % sys.argv[1])
+    print(time.time() - start_time)

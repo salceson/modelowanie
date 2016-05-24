@@ -73,7 +73,7 @@ def median_representative(bucket):
         xs.append(vertex[0])
         ys.append(vertex[1])
         zs.append(vertex[2])
-    mean = tuple([np.average(xs), np.average(ys), np.average(zs)])
+    mean = tuple([np.median(xs), np.median(ys), np.median(zs)])
     dist_sqr = lambda v1, v2: fsum([(v1[0] - v2[0]) ** 2, (v1[1] - v2[1]) ** 2, (v1[2] - v2[2]) ** 2])
     return reduce(lambda acc, v: acc if dist_sqr(acc, mean) < dist_sqr(v, mean) else v, points)
 
